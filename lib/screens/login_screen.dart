@@ -7,6 +7,7 @@ import 'package:reminder_app/controllers/sign_in_controller.dart';
 import 'package:reminder_app/screens/forgot_screen.dart';
 import 'package:reminder_app/screens/phone_auth.dart';
 import 'package:reminder_app/screens/sign_up_screen.dart';
+import 'package:reminder_app/screens/signup.dart';
 
 
 import '../constants/constants.dart';
@@ -220,76 +221,67 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 height: 20,
               ),
-              Container(
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width,
-                height: 50,
-                margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ElevatedButton(
-                    onPressed: () {
 
-                    },
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.resolveWith((
-                            states) {
-                          if (states.contains(MaterialState.pressed)) {
-                            return const Color(0xff1500DB);
-                          }
-                          return const Color(0xff1500DB);
-                        }),
-                        shape: MaterialStateProperty.all<
-                            RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            )
-                        )
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: 40,
-                      ),
-                      child: ChangeNotifierProvider(
-                        create: (_) => SignInWithGoogle(),
-                        child: Consumer<SignInWithGoogle>(
-                          builder:(context,provider,child){
-                            return InkWell(
-                              onTap: (){
-                                provider.googleSignUp(context);
-                              },
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/google.jpg',
-                                    scale: 20,
-                                  ),
-                                  const SizedBox(width: 5,),
-                                  const Text(
-                                    'Continue with Google',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white,
-                                        fontFamily: 'Montserrat'
-                                    ),
-                                  ),
 
-                                ],
-                              ),
-                            );
-                      }
+              ChangeNotifierProvider(
+              create: (_) => SignInWithGoogle(),
+              child: Consumer<SignInWithGoogle>(
+              builder:(context,provider,child){
+    return Container(
+    width: MediaQuery.of(context).size.width,
+    height: 60,
+    margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
+    decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(10),
     ),
-                      ),
-                    )
+    child: ElevatedButton(
+    onPressed:(){
+      provider.googleSignUp(context);
+    },
+    style: ButtonStyle(
+    backgroundColor: MaterialStateProperty.resolveWith((states){
+    if(states.contains(MaterialState.pressed)){
+    return const Color(0xff1500DB);
 
-                ),
+    }
+    return const Color(0xff1500DB);
+    }),
+    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+    RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(15.0),
+    )
+    )
+    ),
+    child: Padding(
+    padding: const EdgeInsets.only(
+    left: 20,
+    ),
+    child: Row(
+    children: [
+    Image.asset(
+    'assets/images/google.png',
+    scale: 10,
+    ),
+    const SizedBox(width: 5,),
+    const Text(
+    'Continue with Google',
+    style: TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w400,
+    color: Colors.white,
+    fontFamily: 'Montserrat'
+    ),
+    ),
+
+    ],
+    ),
+    )
+
+    ),
+    );
+    }
+    ),
               ),
-
-              const SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -306,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   GestureDetector(
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                        return SignupScreen();
+                        return Signup();
                       }));
                     },
 

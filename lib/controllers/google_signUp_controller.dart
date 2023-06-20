@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:ndialog/ndialog.dart';
 import 'package:reminder_app/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 
@@ -32,6 +33,12 @@ class SignInWithGoogle with ChangeNotifier {
 
 
   void googleSignUp(BuildContext context) async {
+
+    // ProgressDialog progressDialog = ProgressDialog(context,
+    //   message: const Text("Signing Up"),
+    //   title: const Text("Please wait..."),
+    // );
+    // progressDialog.show();
 
     GoogleSignInAccount? googleuser = await GoogleSignIn().signIn();
     GoogleSignInAuthentication? googleauth = await googleuser!.authentication;

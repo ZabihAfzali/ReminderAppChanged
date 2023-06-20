@@ -40,7 +40,7 @@ dependencies:
   path_provider: ^2.0.15
   provider: ^5.0.0
   google_sign_in: ^6.1.4
-  firebase_database: ^10.2.2
+  firebase_database: ^10.2.3
   fluttertoast: ^8.2.2
   shared_preferences: ^2.1.2
   flutter_local_notifications: ^14.1.1
@@ -50,6 +50,10 @@ dependencies:
   hive: ^2.2.3
   table_calendar: ^3.0.9
   hive_flutter: ^1.1.0
+  image_picker: ^0.8.9
+  ndialog: ^4.1.1+1
+  firebase_storage: ^11.2.3
+  share: ^2.0.4
 
 
 
