@@ -10,6 +10,7 @@ import 'package:reminder_app/screens/forgot_screen.dart';
 import 'package:reminder_app/screens/login_screen.dart';
 import 'package:reminder_app/screens/phone_auth.dart';
 import 'package:reminder_app/screens/sign_up_screen.dart';
+import 'package:reminder_app/test2.dart';
 import 'package:reminder_app/test_screen.dart';
 
 import 'E-cards/E_cards_screen.dart';
