@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+
 import '../constants/constants.dart';
+import 'date_formats.dart';
+import 'languages.dart';
+
+enum SelectingLanguage {
+  Language1,
+  Language2,
+  Language3,
+  Language4,
+
+}
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
 
@@ -16,7 +27,8 @@ class _SettingScreenState extends State<SettingScreen> {
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(18.0),
-          child: Column(
+          child:
+          Column(
             children: [
               InkWell(
                 onTap: (){
@@ -25,7 +37,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 child: Row(
                   children: [
                     SvgPicture.asset(
-                      'assets/svg_pics/settingBc.svg',
+                      'assets/svg_pics/back_arrow.svg',
                       width: 50,
                     ),
                     const SizedBox(width: 50,),
@@ -62,6 +74,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       children: [
                         InkWell(
                           onTap: (){
+                            _selectLanguage(context);
                           },
                           child:  Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -80,9 +93,9 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                         const SizedBox(height: 20,),
                         InkWell(
-                          // onTap: (){
-                          //   Navigator.push(context, MaterialPageRoute(builder: (ctx)=>SelectDateFormat()));
-                          // },
+                          onTap: (){
+                            _selectDateFormat(context);
+                          },
                           child:  Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -93,7 +106,6 @@ class _SettingScreenState extends State<SettingScreen> {
                               SvgPicture.asset(
                                 'assets/svg_pics/forward.svg',
                                 width: 30,
-
                               ),
                             ],
                           ),
@@ -108,6 +120,31 @@ class _SettingScreenState extends State<SettingScreen> {
           ),
         ),
       ),
+    );
+  }
+  void _selectDateFormat(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+      ),
+      builder: (BuildContext context) {
+        return const SelectDateScreen();
+
+      },
+    );
+  }
+  void _selectLanguage(BuildContext context) {
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+      ),
+      builder: (BuildContext context) {
+        return const SelectLanguage();
+
+      },
     );
   }
 }

@@ -5,14 +5,21 @@ import 'package:hive/hive.dart';
 import 'package:reminder_app/Databases/AddRemindersDatabase/hive_box.dart';
 import 'package:reminder_app/Databases/AddRemindersDatabase/reminders_model.dart';
 import 'package:reminder_app/Homescreens/homescreen.dart';
+import 'package:reminder_app/Reminders/selection_screen.dart';
 import 'package:reminder_app/constants/constants.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:reminder_app/utils/utils.dart';
+import 'package:intl/intl.dart';
+
+import '../Databases/DateFormatDatabase/dateFormat_box.dart';
 
 
 
 class RemindersScreen extends StatefulWidget {
   final List<String>? listIncommingData;
-   RemindersScreen({this.listIncommingData});
+  int? searchIndex;
+
+   RemindersScreen({this.listIncommingData,this.searchIndex,});
 
   @override
   State<RemindersScreen> createState() => _RemindersScreenState();
@@ -26,11 +33,15 @@ class _RemindersScreenState extends State<RemindersScreen> {
   final TextEditingController _dateTimeController = TextEditingController();
   TextEditingController _eventNameController = TextEditingController();
   TextEditingController _searchEventController = TextEditingController();
-  List<String> listSearchedItems = [];
+  List<RemindersModel> listSearchedItems = [];
   String? strSearchResult;
 
   bool _showNotification = false;
   bool _showOnCalendar = false;
+  String? strDateFormat;
+  int? searchIndex;
+
+
 
   DateTime selectedDate = DateTime.now();
   TimeOfDay? _selectedTime;
@@ -48,6 +59,14 @@ class _RemindersScreenState extends State<RemindersScreen> {
         _addEvent();
       });
     }
+
+    if(widget.searchIndex!=null){
+      searchIndex=widget.searchIndex;
+    }
+
+
+
+
   }
 
   @override
@@ -63,7 +82,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+     return SafeArea(
       child: Scaffold(
        backgroundColor: Colors.orangeAccent,
         appBar: AppBar(
@@ -76,36 +95,64 @@ class _RemindersScreenState extends State<RemindersScreen> {
               children: [
                 Row(
                   children: [
-                    IconButton(onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (x)=>HomeScreen()));
+                    InkWell(
+                      onTap: (){
 
-                    }, icon: Icon(Icons.arrow_back_ios)),
-                    SizedBox(width: 60,),
-                    Text('Reminders',style: kBoldSmallStyle,),
+                      },
+                      child: SvgPicture.asset(
+                        'assets/svg_pics/back_arrow.svg',
+                        height: 50,
+                        width: 50,
+                      ),
+                    ),
+                    const SizedBox(width: 60,),
+                    const Text(
+                      'Reminders',style: kBoldSmallStyle,
+                    ),
                   ],
                 ),
-                SizedBox(height: 20,),
-                TextField(
-                  controller: _searchEventController,
-                  onChanged: (String value) {
-                    searchItems(value);
-                  },
-                  decoration: InputDecoration(
-                      hintText: 'Search here',
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                      focusColor: Colors.blue,
-                      filled: true,
-                      fillColor: Colors.white,
+                SizedBox(height: 10,),
+                Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: TextField(
+                    controller: _searchEventController,
+                    onChanged: (String entered_search_text) {
 
+                        searchItems(entered_search_text);
+                    },
+                    decoration: InputDecoration(
+                        hintText: 'Search here',
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        contentPadding:const EdgeInsets.fromLTRB(20,10,20,10),
+                        filled: true,
+                        fillColor: Colors.white,
 
-
-                      suffixIcon: IconButton(
-                        onPressed: (){
-
-                        },
-                        icon: Icon(Icons.arrow_drop_down,size: 40,),
-                      )
+                        suffixIcon: Container(
+                          height: 20,
+                          width: 10,
+                          color: Colors.orange,
+                          child: Center(
+                            child: IconButton(
+                              onPressed: ()
+                              {
+                                _selectLanguage(context);
+                              },
+                              style: const ButtonStyle(
+                                backgroundColor:MaterialStatePropertyAll( Colors.orange),
+                              ),
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                size: 40,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        )
+                    ),
                   ),
                 ),
 
@@ -114,62 +161,63 @@ class _RemindersScreenState extends State<RemindersScreen> {
             ),
           ),
         ),
-        body: listSearchedItems.length ==0?
+        body: listSearchedItems.length == 0 ?
         ValueListenableBuilder<Box<RemindersModel>>(
           valueListenable: HiveBox.getReminderDataBox().listenable(),
           builder: (context,box,_){
-            var data=box.values.toList().cast<RemindersModel>();
-            return ListView.builder(
-              //reverse: true,
-                itemCount: box.length,itemBuilder: (context,index){
-              return Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Card(
-                  child: ListTile(
-                    shape: RoundedRectangleBorder( //<-- SEE HERE
-                  side: BorderSide(width: 2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-
-                    title: Text('${data[index].eventName}'),
-                    subtitle: Text('${data[index].description}\n'
-                        '${data[index].date}  ${data[index].time}'),
-                    leading: SvgPicture.asset('assets/svg_pics/splash.svg',height: 20,width: 20,),
-                    trailing: InkWell(
-                        onTap: (){
-                          showMenuDialog(data[index],data[index].eventName,data[index].description,);
-                        },
-                        child: Icon(Icons.menu,size: 20,)),
-                  ),
-                ),
-              );
-            });
+            var databasee_list_remider =box.values.toList().cast<RemindersModel>();
+            return GetListView(databasee_list_remider);
           },
 
-        ):ListView.builder(
-          //reverse: true,
-            itemCount: listSearchedItems.length,itemBuilder: (context,index){
-          return Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Card(
-              child: ListTile(
-                shape: RoundedRectangleBorder( //<-- SEE HERE
-                  side: BorderSide(width: 2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-
-                title: Text('${listSearchedItems[0]}'),
-                subtitle: Text('${listSearchedItems[1]}\n'
-                    '${listSearchedItems[2]}  ${listSearchedItems[3]}'),
-                leading: SvgPicture.asset('assets/svg_pics/splash.svg',height: 20,width: 20,),
-
-              ),
-            ),
-          );
-        }),
+        ):
+        GetListView(listSearchedItems),
 
       ),
     );
+  }
+
+
+   GetListView(List<RemindersModel> listSearchedItems ) {
+    return ListView.builder(
+      //reverse: true,
+        itemCount: listSearchedItems.length,
+        itemBuilder: (context,index){
+      return Padding(
+        padding: const EdgeInsets.only(
+          left:10,
+          right: 10,
+          top: 10,
+        ),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: Colors.black,
+              width: 2,
+            ),
+          ),
+          child: ListTile(
+            title: Text('${listSearchedItems[index].eventName}'),
+            subtitle: Text('${listSearchedItems[index].description}\n'
+                '${listSearchedItems[index].date}  ${listSearchedItems[index].time}'),
+            leading: SvgPicture.asset(
+              'assets/svg_pics/splash.svg',
+              width: 50,
+              height: 50,
+            ),
+            trailing: InkWell(
+              onTap: (){
+                showMenuDialog(listSearchedItems[index],listSearchedItems[index].eventName,listSearchedItems[index].description,);
+              },
+              child:SvgPicture.asset(
+                'assets/svg_pics/more-vertical.svg',
+                height: 20,
+              ),
+            ),
+          ),
+        ),
+      );
+    });
   }
 
 
@@ -402,6 +450,19 @@ class _RemindersScreenState extends State<RemindersScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+
+    try {
+      Box dateFormatBox = DateFormatBox.getDateFormatBox();
+
+      // var data = box.values.toList().cast<DateFormatModel>();
+      strDateFormat = dateFormatBox.get("1").dateFormat.toString();
+
+      print('Date format This hive recieved data $strDateFormat');
+    }catch(e){
+      utils.toastMessage(e.toString());
+    }
+
+
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialEntryMode: DatePickerEntryMode.input,
@@ -413,13 +474,13 @@ class _RemindersScreenState extends State<RemindersScreen> {
     if (pickedDate != null && pickedDate != selectedDate) {
       setState(() {
         selectedDate = pickedDate;
-        _selectTime(context);
+        _selectTime(context,strDateFormat!);
       });
     }
   }
 
 
-  Future<void> _selectTime(BuildContext context) async {
+  Future<void> _selectTime(BuildContext context,String format) async {
 
     final TimeOfDay? selectedTime = await showTimePicker(
       context: context,
@@ -435,19 +496,12 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
     if (selectedTime != null) {
       final DateTime currentDateTime = DateTime.now();
-      final DateTime selectedDateTime = DateTime(
-        currentDateTime.year,
-        currentDateTime.month,
-        currentDateTime.day,
-        selectedTime.hour,
-        selectedTime.minute,
-      );
+      DateTime dateTime = DateTime(selectedDate.year,selectedDate.month,selectedDate.day,selectedTime.hour, selectedTime.minute);
 
-      if (selectedDateTime.isAfter(currentDateTime)) {
+      if (dateTime.isAfter(currentDateTime)) {
         setState(() {
           _selectedTime = selectedTime;
-          _dateTimeController.text=_selectedTime.toString()!+' '+selectedDate.toString()!;
-        });
+          _dateTimeController.text=DateFormat(format+'h:mm a').format(dateTime).toString();});
       } else {
         // Handle invalid selection (past time)
         showDialog(
@@ -484,37 +538,20 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
 
 
-  void searchItems(String searchTerm) async {
+  void searchItems(String entered_search_text) async {
 
 
     var box = HiveBox.getReminderDataBox();
 
+    var databasee_list_remider =box.values.toList().cast<RemindersModel>();
 
-        final searchResults = box.values.where((RemindersModel) =>
-            RemindersModel.eventName.toLowerCase().contains(searchTerm.toLowerCase()));
+    listSearchedItems = [];
 
-
-
-        if(searchResults.length> 0) {
-          List<String> list=[];
-          listSearchedItems = [];
-          for (var item in searchResults) {
-            strSearchResult=item.eventName;
-            if(_searchEventController!=null) {
-              listSearchedItems.add(item.eventName);
-              listSearchedItems.add(item.description);
-              listSearchedItems.add(item.date);
-              listSearchedItems.add(item.time);
-              print('Searched list result ${list.length}');
-            }
-          }
-          print('Searched list result ${listSearchedItems.length}');
-
-
-        }
-        else{
-          print('Empty list');
-        }
+    databasee_list_remider.forEach((RemindersModel remindersModel) {
+      if(remindersModel.eventName.trim().toLowerCase().contains(entered_search_text.trim().toLowerCase())) {
+        listSearchedItems.add(remindersModel);
+      }
+    });
 
     setState(() {
 
@@ -535,4 +572,70 @@ class _RemindersScreenState extends State<RemindersScreen> {
     print(box);
 
   }
+
+  void _selectLanguage(BuildContext context) {
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+      ),
+      builder: (BuildContext context) {
+        return const SelectionSearch();
+
+      },
+    );
+  }
+
+  Future<void> searchCalender(BuildContext context) async {
+
+    try {
+      Box dateFormatBox = DateFormatBox.getDateFormatBox();
+
+      // var data = box.values.toList().cast<DateFormatModel>();
+      strDateFormat = dateFormatBox.get("1").dateFormat.toString();
+
+      print('Date format This hive recieved data $strDateFormat');
+    }catch(e){
+      utils.toastMessage(e.toString());
+    }
+
+
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialEntryMode: DatePickerEntryMode.input,
+      initialDate: selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null && pickedDate != selectedDate) {
+      setState(() {
+        selectedDate = pickedDate;
+        searchDateFromCalender(selectedDate.toString());
+      });
+    }
+  }
+
+  void searchDateFromCalender(String entered_search_text) async {
+
+
+    var box = HiveBox.getReminderDataBox();
+
+    var databasee_list_remider =box.values.toList().cast<RemindersModel>();
+
+    listSearchedItems = [];
+
+    databasee_list_remider.forEach((RemindersModel remindersModel) {
+      if(remindersModel.date.trim().toLowerCase().contains(entered_search_text.trim().toLowerCase())) {
+        listSearchedItems.add(remindersModel);
+      }
+    });
+
+    setState(() {
+
+    });
+
+  }
+
 }

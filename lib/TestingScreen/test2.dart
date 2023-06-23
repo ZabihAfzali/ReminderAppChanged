@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -18,6 +16,7 @@ class _AlarmSchedulerState extends State<AlarmScheduler> {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   late DateTime selectedDateTime;
 
+
   @override
   void initState() {
     super.initState();
@@ -25,10 +24,24 @@ class _AlarmSchedulerState extends State<AlarmScheduler> {
     initializeNotifications();
     selectedDateTime = DateTime.now();
   }
+  Future<void> copySoundFileFromAssets() async {
+    final soundFileName = 'alarm_sound.mp3'; // Replace with your sound file name
+    final soundFilePath = await _getSoundFilePath(soundFileName);
+    if (!await File(soundFilePath).exists()) {
+      final ByteData byteData = await rootBundle.load('assets/sounds/$soundFileName');
+      final Uint8List soundData = byteData.buffer.asUint8List();
+      await File(soundFilePath).writeAsBytes(soundData);
+    }
+  }
+
+  Future<String> _getSoundFilePath(String soundFileName) async {
+    final appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    return '${appDocumentsDirectory.path}/$soundFileName';
+  }
 
   Future<void> initializeNotifications() async {
     final initializationSettingsAndroid =
-    AndroidInitializationSettings('app_icon');
+    AndroidInitializationSettings('logor');
     final initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
     );
@@ -41,6 +54,14 @@ class _AlarmSchedulerState extends State<AlarmScheduler> {
       'Channel for scheduling alarms',
       importance: Importance.max,
       priority: Priority.high,
+
+      sound: RawResourceAndroidNotificationSound('alarm_sound.mp3'),
+      enableLights: true,
+      playSound: true,
+      color: Colors.deepOrange,
+      ledColor: Colors.deepOrange,
+      ledOnMs: 1000, // Specify the LED on duration in milliseconds
+      ledOffMs: 500,
     );
 
     final platformChannelSpecifics = NotificationDetails(
@@ -113,84 +134,3 @@ class _AlarmSchedulerState extends State<AlarmScheduler> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class ShareScreen extends StatefulWidget {
-  const ShareScreen({Key? key}) : super(key: key);
-
-  @override
-  State<ShareScreen> createState() => _ShareScreenState();
-}
-
-class _ShareScreenState extends State<ShareScreen> {
-  List<String> imageNames = [
-    'assets/images/google.jpg',
-    'assets/images/google.jpg',
-    'assets/images/google.jpg',
-
-  ];
-
-  Future<void> _shareAssetImage(String imageName) async {
-    try {
-      final bytes = await rootBundle.load('$imageName');
-      final List<int> imageData = bytes.buffer.asUint8List();
-
-
-      final tempDir = await getTemporaryDirectory();
-      // print('File path: ${tempDir.path}');
-
-      final file_path = await File('${imageName}').path;
-      // file.writeAsBytesSync(imageData);
-      print('File path: ${file_path}');
-
-
-      Share.shareFiles(['${file_path}'], text: 'Great picture');
-
-    } catch (e) {
-      print('Error sharing image: $e');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Image List'),
-      ),
-      body: ListView.builder(
-        itemCount: imageNames.length,
-        itemBuilder: (context, index) {
-          final imageName = imageNames[index];
-          return ListTile(
-            title: Text('Image ${index + 1}'),
-            leading: Image.asset(imageNames[index].toString()),
-            trailing: IconButton(
-              icon: Icon(Icons.share),
-              onPressed: () {
-                _shareAssetImage(imageName);
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-//

@@ -8,17 +8,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 import 'package:reminder_app/Databases/AddRemindersDatabase/hive_box.dart';
 import 'package:reminder_app/Databases/AddRemindersDatabase/reminders_model.dart';
+import 'package:reminder_app/Databases/DateFormatDatabase/dateFormat_model.dart';
 import 'package:reminder_app/E-cards/E_cards_screen.dart';
 import 'package:reminder_app/Reminders/reminders_list.dart';
 import 'package:reminder_app/constants/constants.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:reminder_app/screens/login_screen.dart';
+import 'package:reminder_app/utils/utils.dart';
 
+import '../Databases/DateFormatDatabase/dateFormat_box.dart';
 import '../Settings/profile_settings.dart';
 import '../Settings/settings.dart';
-import '../test_screen.dart';
+import '../controllers/SettingsProvider.dart';
+import '../TestingScreen/test_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -39,8 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime selectedDate = DateTime.now();
   TimeOfDay? _selectedTime;
   final TimeOfDay currentTime = TimeOfDay.now();
-
-
+   DateFormat dateFormat=DateFormat('EEEE, MMMM d, yyyy');
 
   int _selectedIndex = 0;
 
@@ -48,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _dateTimeController = TextEditingController();
   bool _showNotification = false;
   bool _showOnCalendar = false;
+  String? strDateFormat;
 
   @override
   void dispose() {
@@ -56,10 +61,20 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+
+
+  }
+
 
 
   @override
   Widget build(BuildContext context) {
+    dateFormat= DateFormat(context.watch<DateFormatProvider>().dateFormat);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -215,44 +230,195 @@ class _HomeScreenState extends State<HomeScreen> {
           valueListenable: HiveBox.getEventDataBox().listenable(),
           builder: (context,box,_){
             var data=box.values.toList().cast<AddEventModel>();
-            return ListView.builder(
-              //reverse: true,
-                itemCount: box.length,itemBuilder: (context,index){
-              return Padding(
-                padding: const EdgeInsets.all(15),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(width: 2),
-                    color: Colors.cyan,
-
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text('${data[index].eventName.toString()}',style: kBoldSmallStyle,),
-                          InkWell(
-                            onTap: (){
-                              showMenuDialog(data[index],data[index].eventName.toString());
-
-                            },child: Icon(Icons.menu,size: 20,color: Colors.black,),
-                          )
-                        ],
+            return Padding(
+              padding: const EdgeInsets.only(
+                left: 20,
+                top: 50,
+              ),
+              child: Column(
+                children: [
+                  const Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'EVENTS',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color:Color(0xff474A57),
+                        fontFamily: 'Montserrat',
                       ),
-                      SizedBox(height: 50,),
-                      ElevatedButton(onPressed: (){
-                        _showReminderDialogue(context,data[index].eventName);
-
-
-                      }, child: Text('Set Reminder',style: kSimpleText,))
-                    ],
+                    ),
                   ),
+                  const SizedBox(height: 20,),
+                  Expanded(
+                    child: ListView.builder(
+                      //reverse: true,
+                        itemCount: box.length,itemBuilder: (context,index){
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          left: 10,
+                          right: 10,
+                          bottom: 10,
+                        ),
+                        child: Container(
+                          height: 200,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Color(0xffE9E7FC),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 2,
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Stack(
+                                      alignment: Alignment.topLeft,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/svg_pics/bell.svg',
+                                          height: 40,
+                                          width: 40,
+                                        ),
+                                        Positioned(
+                                          width: 20,
+                                          height: 20,
+                                          left: 10,
+                                          child: Container(
+                                            height: 20,
+                                            width: 20,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(100),
+                                              color: Colors.red,
+                                            ),
+                                            child: const Align(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                '2',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.white,
+                                                  fontFamily: 'Montserrat',
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
 
-                ),
-              );
-            });
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 100,
+                                  right: 10,
+
+                                ),
+                                child: ListTile(
+                                  title: Text(
+                                    '${data[index].eventName.toString()}',
+                                    style: const TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black,
+                                      fontFamily: 'Montserrat',
+                                    ),
+                                  ),
+                                  trailing: InkWell(
+                                    onTap: (){
+                                      showMenuDialog(data[index],data[index].eventName.toString());
+                                    },
+                                    child: SvgPicture.asset(
+                                      'assets/svg_pics/more-vertical.svg',
+                                      height: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 200,
+                                height: 50,
+                                margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      width: 2,
+                                      color: Colors.black,
+                                    )
+
+                                ),
+                                child: ElevatedButton(
+                                  onPressed:(){
+                                    _showReminderDialogue(context,data[index].eventName);
+
+                                  },
+                                  style: ButtonStyle(
+                                      backgroundColor: MaterialStateProperty.resolveWith((states){
+                                        if(states.contains(MaterialState.pressed)){
+                                          return Color(0xffFFBD12);
+
+                                        }
+                                        return Color(0xffFFBD12);
+                                      }),
+                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10.0),
+                                          )
+                                      )
+                                  ),
+                                  child:const Text(
+                                    'Set Reminder',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.black,
+                                        fontFamily: 'Montserrat'
+                                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+
+                                ),
+                              ),
+
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              //   children: [
+                              //     Text('${data[index].eventName.toString()}',style: kBoldSmallStyle,),
+                              //     InkWell(
+                              //       onTap: (){
+                              //         showMenuDialog(data[index],data[index].eventName.toString());
+                              //
+                              //       },child: Icon(Icons.menu,size: 20,color: Colors.black,),
+                              //     )
+                              //   ],
+                              // ),
+                              // SizedBox(height: 50,),
+                              // ElevatedButton(onPressed: (){
+                              //   _showReminderDialogue(context,data[index].eventName);
+                              //
+                              //
+                              // }, child: Text('Set Reminder',style: kSimpleText,))
+                            ],
+                          ),
+
+                        ),
+                      );
+                    }),
+                  ),
+                ],
+              ),
+            );
           },
 
         ),
@@ -545,6 +711,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+
+    try {
+      Box dateFormatBox = DateFormatBox.getDateFormatBox();
+
+      // var data = box.values.toList().cast<DateFormatModel>();
+       strDateFormat = dateFormatBox.get("1").dateFormat.toString();
+
+      print('Date format This hive recieved data $strDateFormat');
+    }catch(e){
+      utils.toastMessage(e.toString());
+    }
+
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialEntryMode: DatePickerEntryMode.input,
@@ -556,13 +734,15 @@ class _HomeScreenState extends State<HomeScreen> {
     if (pickedDate != null && pickedDate != selectedDate) {
       setState(() {
         selectedDate = pickedDate;
-        _selectTime(context);
+        _selectTime(context,strDateFormat!);
       });
     }
   }
 
 
-  Future<void> _selectTime(BuildContext context) async {
+  Future<void> _selectTime(BuildContext context,String format) async {
+
+
 
     final TimeOfDay? selectedTime = await showTimePicker(
       context: context,
@@ -578,19 +758,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (selectedTime != null) {
       final DateTime currentDateTime = DateTime.now();
-      final DateTime selectedDateTime = DateTime(
-        currentDateTime.year,
-        currentDateTime.month,
-        currentDateTime.day,
-        selectedTime.hour,
-        selectedTime.minute,
-      );
+      DateTime dateTime = DateTime(selectedDate.year,selectedDate.month,selectedDate.day,selectedTime.hour, selectedTime.minute);
 
-      if (selectedDateTime.isAfter(currentDateTime)) {
+
+      if (dateTime.isAfter(DateTime.now())) {
         setState(() {
           _selectedTime = selectedTime;
-          _dateTimeController.text=_selectedTime.toString()!+' '+selectedDate.toString()!;
-        });
+          _dateTimeController.text=DateFormat(format+'h:mm a').format(dateTime).toString();});
       } else {
         // Handle invalid selection (past time)
         showDialog(
@@ -616,9 +790,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showReminderDialogue(BuildContext context,String eventName) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-      ),
       builder: (BuildContext context) {
         return SingleChildScrollView(
             child: Column(
@@ -700,6 +871,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               hintText: 'Select Date and Time',
                               suffixIcon:IconButton(
                                   onPressed: () {
+
                                     _selectDate(context);
                                   },
                                   icon:  const Icon(
@@ -758,6 +930,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             child: ElevatedButton(
                               onPressed:(){
+                                Navigator.pop(context);
                                 addDataToReminderDatabaseList(eventName);
 
                               },

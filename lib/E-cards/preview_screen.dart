@@ -70,7 +70,6 @@ class _EcardPreviewScreenState extends State<EcardPreviewScreen> with SingleTick
                              )
 
                           ],
-
         ),
         bottom: TabBar(
           controller: _tabController,

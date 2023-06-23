@@ -54,6 +54,7 @@ dependencies:
   ndialog: ^4.1.1+1
   firebase_storage: ^11.2.3
   share: ^2.0.4
+  timezone: ^0.9.2
 
 
 
@@ -119,6 +120,7 @@ flutter:
   assets:
     - assets/images/
     - assets/svg_pics/
+    - assets/sounds/
 
   fonts:
       - family: Times New Roman
