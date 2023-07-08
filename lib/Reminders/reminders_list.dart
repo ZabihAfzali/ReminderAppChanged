@@ -4,14 +4,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:reminder_app/Databases/AddRemindersDatabase/hive_box.dart';
 import 'package:reminder_app/Databases/AddRemindersDatabase/reminders_model.dart';
-import 'package:reminder_app/Homescreens/homescreen.dart';
-import 'package:reminder_app/Reminders/selection_screen.dart';
 import 'package:reminder_app/constants/constants.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:reminder_app/screens/login_screen.dart';
 import 'package:reminder_app/utils/utils.dart';
 import 'package:intl/intl.dart';
 
 import '../Databases/DateFormatDatabase/dateFormat_box.dart';
+
 
 
 
@@ -97,7 +97,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   children: [
                     InkWell(
                       onTap: (){
-
+                        Navigator.pop(context);
                       },
                       child: SvgPicture.asset(
                         'assets/svg_pics/back_arrow.svg',
@@ -452,10 +452,10 @@ class _RemindersScreenState extends State<RemindersScreen> {
   Future<void> _selectDate(BuildContext context) async {
 
     try {
-      Box dateFormatBox = DateFormatBox.getDateFormatBox();
+      //Box dateFormatBox = DateFormatBox.getDateFormatBox();
 
       // var data = box.values.toList().cast<DateFormatModel>();
-      strDateFormat = dateFormatBox.get("1").dateFormat.toString();
+     // strDateFormat = dateFormatBox.get("1").dateFormat.toString();
 
       print('Date format This hive recieved data $strDateFormat');
     }catch(e){
@@ -581,7 +581,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
       ),
       builder: (BuildContext context) {
-        return const SelectionSearch();
+        return const LoginScreen();
 
       },
     );
@@ -591,16 +591,13 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
     try {
       Box dateFormatBox = DateFormatBox.getDateFormatBox();
-
-      // var data = box.values.toList().cast<DateFormatModel>();
+      //var data = box.values.toList().cast<DateFormatModel>();
       strDateFormat = dateFormatBox.get("1").dateFormat.toString();
 
       print('Date format This hive recieved data $strDateFormat');
     }catch(e){
       utils.toastMessage(e.toString());
     }
-
-
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialEntryMode: DatePickerEntryMode.input,
@@ -616,10 +613,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
       });
     }
   }
-
   void searchDateFromCalender(String entered_search_text) async {
-
-
     var box = HiveBox.getReminderDataBox();
 
     var databasee_list_remider =box.values.toList().cast<RemindersModel>();

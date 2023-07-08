@@ -5,23 +5,23 @@ import 'package:reminder_app/utils/utils.dart';
 import '../controllers/sign_up_controller.dart';
 
 class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
+
   @override
   _SignupScreenState createState() => _SignupScreenState();
 }
 
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   final _nameFocusNode = FocusNode();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
   final _confirmPasswordFocusNode = FocusNode();
-
-
   @override
   void dispose() {
     // TODO: implement dispose
@@ -166,7 +166,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
                                     }
                                   },
-                                  child: Text('Sign Up'),
+                                  child: const Text('Sign Up'),
                                 ),
                               ],
                             ),

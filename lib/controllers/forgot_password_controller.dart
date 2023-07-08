@@ -7,8 +7,6 @@ import 'package:reminder_app/utils/utils.dart';
 
 
 class ForgotPasswordController with ChangeNotifier{
-
-
   FirebaseAuth firebaseAuth=FirebaseAuth.instance;
 
   bool _loading=true;
@@ -29,7 +27,7 @@ class ForgotPasswordController with ChangeNotifier{
         utils.toastMessage('email sent successfully');
         setLoading(false);
         Navigator.push(context, MaterialPageRoute(builder: (ctx){
-          return LoginScreen();
+          return const LoginScreen();
         }));
       }).onError((error, stackTrace){
         setLoading(false);

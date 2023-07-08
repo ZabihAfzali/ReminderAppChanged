@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import '../controllers/SettingsProvider.dart';
 class DateTimePicker extends StatefulWidget {
   @override
   State<DateTimePicker> createState() => _DateTimePickerState();
@@ -23,8 +22,8 @@ class _DateTimePickerState extends State<DateTimePicker> {
   }
 
   void showDateTimePicker(BuildContext context) {
-    final dateFormatProvider = Provider.of<DateFormatProvider>(context, listen: false);
-    final dateFormat = dateFormatProvider.dateFormat;
+    //final dateFormatProvider = Provider.of<DateFormatProvider>(context, listen: false);
+    //final dateFormat = dateFormatProvider.dateFormat;
 
 
 
@@ -47,7 +46,7 @@ class _DateTimePickerState extends State<DateTimePicker> {
               selectedTime.hour,
               selectedTime.minute,
             );
-            final formatedDate=DateFormat(dateFormat).format(dateTime);
+            //final formatedDate=DateFormat(dateFormat).format(dateTime);
 
 
             setState(() {
@@ -55,8 +54,8 @@ class _DateTimePickerState extends State<DateTimePicker> {
             });
             //final formattedDateTime = dateFormat.format(dateTime);
             // Handle the selected date and time
-            print('this is waht is printed ${dateFormat.toString()}');
-            print('this is format ${formatedDate.toString()}');
+            // print('this is waht is printed ${dateFormat.toString()}');
+            // print('this is format ${formatedDate.toString()}');
 
           }
         });

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 const kBoldTextStyle=TextStyle(
-  fontSize: 30,
+  fontSize: 25,
   fontWeight: FontWeight.w700,
   color: Colors.black,
-  fontFamily: 'Times New Roman',
+  fontFamily: 'Montserrat',
 );
 
 const kBoldSmallStyle=TextStyle(
   fontSize: 20,
   fontWeight: FontWeight.w700,
   color: Colors.black,
-  fontFamily: 'Times New Roman',
+  fontFamily: 'Montserrat',
 );
 const kSimpleText=TextStyle(
   fontSize: 15,
@@ -21,9 +21,8 @@ const kSimpleText=TextStyle(
 const kFourhText=TextStyle(
     fontSize: 20,
     color: Colors.black54,
-    fontFamily: 'Times New Roman'
+    fontFamily: 'Montserrat'
 );
-
 const  kBottomNavigationBar =  [
   BottomNavigationBarItem(
     icon: Icon(Icons.calendar_month),
@@ -40,4 +39,16 @@ const  kBottomNavigationBar =  [
     label: 'E-cards',
   ),
 ];
+const kSplashText1=TextStyle(
+  fontSize: 20,
+  color: Colors.white,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+);
+const kSplashText2=TextStyle(
+  fontSize: 40,
+  color: Colors.white,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Bebas',
+);
 

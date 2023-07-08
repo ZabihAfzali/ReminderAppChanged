@@ -28,7 +28,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Password Reset'),
+          title: const Text('Password Reset'),
           backgroundColor: Colors.yellow,
         ),
         body: SafeArea(
@@ -71,8 +71,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               create: (_) => ForgotPasswordController(),
                               child: Consumer<ForgotPasswordController>(
                               builder: (context, provider, child) {
-                              return
-                              ElevatedButton(
+                              return ElevatedButton(
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
                                     // Form is valid, perform signup logic

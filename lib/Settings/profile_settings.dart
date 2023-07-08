@@ -14,6 +14,8 @@ import 'package:reminder_app/utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import '../controllers/profile_controller.dart';
 import '../controllers/sign_up_controller.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:reminder_app/Settings/reset_Password_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -25,20 +27,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-
-
   User? currentUser = FirebaseAuth.instance.currentUser;
   DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('user');
   Map<dynamic,dynamic>? mapData;
-
   bool _isEditName=false;
   bool _isEditEmail=false;
   bool _isEditPass=false;
   bool _isEditConfirm=false;
-
-
   bool hasImage=false;
-
 
   @override
   void initState() {
@@ -46,7 +42,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
 
   }
-
   void toggleEditable() {
     setState(() {
       _isEditName = !_isEditName;
@@ -67,8 +62,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _isEditConfirm = !_isEditConfirm;
     });
   }
-
-
   @override
   void dispose() {
     // TODO: implement dispose
@@ -79,36 +72,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Row(
-            children: [
-              IconButton(onPressed: (){
-
-              }, icon: Icon(Icons.arrow_back_ios,size: 30,)),
-              SizedBox(width: 30,),
-              Text('Profile Setting',style: kBoldTextStyle,),
-            ],
-          ),
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          actions: [
-
-          ],
-        ),
-        body: SafeArea(
-            child: Padding(
+    return SafeArea(
+      child:Scaffold(
+        body: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.only(right: 10,left: 10,bottom: 5),
                     child: ChangeNotifierProvider(
                       create: (_)=> ProfileController(),
                       child: Consumer<ProfileController>(
                         builder: (context,provider,child){
-                          return
-                      Form(
+                          return Form(
                         key: _formKey,
                         child: StreamBuilder(
                           stream: dbRef.child(currentUser!.uid.toString()).onValue,
@@ -119,9 +93,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             else if(snapshot.hasData){
                               mapData=snapshot.data.snapshot.value;
                               setInitialData();
-                              return Column(
+                              return SingleChildScrollView(
+                              child:  Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
+                                  SizedBox(height: 40,),
+                                  InkWell(
+                                    onTap: (){
+                                      Navigator.pop(context);
+                                    },
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/svg_pics/back_arrow.svg',
+                                          width: 50,
+                                        ),
+                                        const SizedBox(width: 70,),
+                                        const Text(
+                                          'Profile',
+                                          style: TextStyle(
+                                            fontSize: 30,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w800,
+                                            fontFamily: 'Montserrat',
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20,),
                                   Center(
                                     child: Stack(
                                         children: [
@@ -131,23 +131,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             margin: const EdgeInsets.symmetric(
                                                 vertical: 20, horizontal: 10),
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(
-                                                  10),
+                                              borderRadius: BorderRadius.circular(10),
                                               color: Colors.transparent,
+                                              image: DecorationImage(
+                                                  image: NetworkImage(
+                                                    mapData!['profile_image_url'.toString()],
+                                                  ),
+                                                fit: BoxFit.cover
+                                              ),
                                             ),
                                             child: CircleAvatar(
                                               radius: 80,
-                                              backgroundColor: Colors.white,
                                               child: ClipRRect(
-                                                borderRadius: BorderRadius
-                                                    .circular(10),
+                                                borderRadius: BorderRadius.circular(10),
                                                 child: CircleAvatar(
                                                   radius: 200,
                                                   child: provider.image==null?mapData!['profile_image_url'].toString()
                                                     ==''? Image.asset('assets/images/person.jpeg'):
                                                 Image(
                                                   fit: BoxFit.cover,
-                                                  image: NetworkImage(mapData!['profile_image_url'.toString()]),
+                                                  image: NetworkImage(
+                                                    mapData!['profile_image_url'.toString()],
+                                                  ),
                                                   loadingBuilder: (context,child,loadingProgress){
                                                     if(loadingProgress==null) return child;
                                                     return Center(child: CircularProgressIndicator(),);
@@ -294,7 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       border: const OutlineInputBorder(),
                                       suffixIcon: IconButton(
                                         onPressed:(){
-                                          Navigator.push(context, MaterialPageRoute(builder: (tx)=>PasswordResetScreen()));
+                                          Navigator.push(context, MaterialPageRoute(builder: (tx)=>ResetPasswordScreen()));
                                         },
                                         icon: _isEditPass ?const Icon(
                                           Icons.edit,
@@ -318,33 +323,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 16.0),
-                                   ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue,
+                                  Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Container(
+                                        width: double.infinity,
+                                        height: 50,
+                                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
                                         ),
-                                        onPressed: () {
-                                          if (_formKey.currentState!.validate()) {
-                                            // Form is valid, perform signup logic
-                                            // Add your signup implementation here
-                                            if(_isEditName){
-                                            provider.updateName(
-                                                context, _nameController.text);}
-                                                if(_isEditEmail){
+                                        child: ElevatedButton(
+                                          onPressed:()
+                                          {
+                                            if (_formKey.currentState!.validate()) {
+                                              // Form is valid, perform signup logic
+                                              // Add your signup implementation here
+                                              if(_isEditName){
+                                                provider.updateName(
+                                                    context, _nameController.text);}
+                                              if(_isEditEmail){
                                                 provider.updateEmail(
-                                                context, _emailController.text.trim());}
-                                                }
+                                                    context, _emailController.text.trim());}
+                                            }
                                           },
+                                          style: ButtonStyle(
+                                              backgroundColor: MaterialStateProperty.resolveWith((states){
+                                                if(states.contains(MaterialState.pressed)){
+                                                  return const Color(0xff1947E5);
 
-                                        child: Text('Save',style: TextStyle(
-                                          fontSize: 15
-                                        ),),
-                                      ),
+                                                }
+                                                return const Color(0xff1947E5);
+                                              }),
+                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(15.0),
+                                                  )
+                                              )
+                                          ),
+                                          child: const Text(
+                                            'Save',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w900,
+                                                color: Colors.white,
+                                                fontFamily: 'Montserrat'
+                                            ),
+                                          ),
+                                        )
+
+
+                                    ),
+                                  ),
 
                                 ],
+                              ),
                               );
-                            }else{
-                              return Center(child: Text('Sometning went wrong'),);
+                            }
+                            else{
+                              return Center(
+                                child: Text(
+                                  'Something went wrong',
+                              ),);
                             }
                           }
 
@@ -356,7 +395,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 )
-            )));
+            ),
+      );
   }
 
 

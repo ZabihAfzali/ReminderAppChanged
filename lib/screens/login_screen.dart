@@ -10,6 +10,7 @@ import 'package:reminder_app/screens/sign_up_screen.dart';
 import 'package:reminder_app/screens/signup.dart';
 
 
+import '../Homescreens/homescreen.dart';
 import '../constants/constants.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -44,40 +45,50 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const SizedBox(height: 100,),
-              const Text(
-                ' Login ',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                  fontFamily: 'Times New Roman',
-                ),
-                textAlign: TextAlign.start,
+              const SizedBox(height: 150,),
+              const Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  ' Login ',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                    fontFamily: 'Montserrat',
+                  ),
+                  textAlign: TextAlign.start,
 
+                ),
               ),
-              const SizedBox(height: 50,),
+              const SizedBox(height: 20,),
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  contentPadding:const EdgeInsets.fromLTRB(20,10,20,10),
                   filled: true,
-                  fillColor: Colors.grey.shade200,
+                  fillColor:Colors.grey.shade200,
                   hintText: 'Email address',
-                  hintStyle: const TextStyle(
+                  hintStyle: TextStyle(
                     color: Colors.black,
+                    fontSize: 20,
+                    fontFamily: 'Montserrat',
                   ),
-                  suffixIcon: const Icon(
-                    Icons.visibility, color: Colors.black54,),
-                  prefixIcon: const Icon(Icons.email, color: Colors.black54,),
-                  enabledBorder: OutlineInputBorder(
+                  prefixIcon:const Icon(
+                    Icons.email_outlined,
+                    color: Colors.black,
+                    size: 24,
+                  ),
+                  enabledBorder:  OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
+                    borderSide:
+                    BorderSide(color: Colors.black, width: 2.0),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
+                    borderSide:
+                    BorderSide(color: Colors.black, width: 2.0),
                   ),
                 ),
-
 
               ),
               const SizedBox(height: 20,),
@@ -86,59 +97,48 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: passwordController,
 
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    contentPadding:const EdgeInsets.fromLTRB(20,10,20,10),
                     filled: true,
-                    fillColor: Colors.grey.shade200,
+                    fillColor:Colors.grey.shade200,
                     hintText: '***********',
-                    hintStyle: const TextStyle(
+                    hintStyle: TextStyle(
                       color: Colors.black,
+                      fontSize: 20,
+                      fontFamily: 'Montserrat',
                     ),
                     focusColor: Colors.orangeAccent,
-                    enabledBorder: OutlineInputBorder(
+                    enabledBorder:  OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
+                      borderSide:
+                      BorderSide(color: Colors.black, width: 2.0),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
+                      borderSide:
+                      BorderSide(color: Colors.black, width: 2.0),
                     ),
-                    suffixIcon: IconButton(
-                      onPressed: () {
+                    suffixIcon:IconButton(
+                      onPressed: (){
                         setState(() {
-                          passwordOb = !passwordOb;
+                          passwordOb=!passwordOb;
                         });
                       },
-                      icon: Icon(
-                          passwordOb ?
-                          Icons.visibility_off : Icons.visibility
+                      icon: Icon(passwordOb ?
+                      Icons.visibility_off_outlined: Icons.visibility_outlined,
+                        color: Colors.black,
+                        size: 24,
                       ),
-                      focusColor: Colors.teal,
-                      color: Colors.black54,
                     ),
-                    prefixIcon: const Icon(
-                      Icons.lock,
-                      color: Colors.black54,
-                      size: 40,
+                    prefixIcon:Icon(
+                      Icons.lock_outline,
+                      color: Colors.black,
+                      size: 24,
                     ),
                   )
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (ctx){
-                        return PhoneAuthScreen();
-                      }));
-                    },
-                    child: const Text(
-                      'OTP Verification',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xff1500DB),
-                        fontFamily: 'Times New Roman',
-                      ),
-                    ),
-                  ),
                   TextButton(
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (ctx) {
@@ -165,51 +165,45 @@ class _LoginScreenState extends State<LoginScreen> {
               ChangeNotifierProvider(create: (_) => SignInController(),
                   child: Consumer<SignInController>(
                       builder: (context, provider, child) {
-                        return
-                          Container(
-                              width: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width,
-                              height: 50,
-                              margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  provider.signIn(context, emailController.text,
-                                      passwordController.text);
-                                },
-                                style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty
-                                        .resolveWith((states) {
-                                      if (states.contains(
-                                          MaterialState.pressed)) {
-                                        return Colors.yellow;
-                                      }
-                                      return Colors.yellow;
-                                    }),
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              15.0),
-                                        )
-                                    )
-                                ),
-                                child: const Text(
-                                  'Login',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                  textAlign: TextAlign.start,
-                                ),
+                        return Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 50,
+                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
+                        decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ElevatedButton(
+                        onPressed:(){
+                          provider.signIn(context, emailController.text,
+                              passwordController.text);
+                        },
+                        style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.resolveWith((states){
+                        if(states.contains(MaterialState.pressed)){
+                        return Color(0xffFFBD12);
 
-                              )
-                          );
+                        }
+                        return Color(0xffFFBD12);
+                        }),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        )
+                        )
+                        ),
+                        child:const Text(
+                        'Login',
+                        style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black,
+                        fontFamily: 'Montserrat'
+                        ),
+                        textAlign: TextAlign.start,
+                        ),
+
+                        ),
+                        );
                       }
                   )
               ),
@@ -221,64 +215,62 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 height: 20,
               ),
-
-
               ChangeNotifierProvider(
               create: (_) => SignInWithGoogle(),
               child: Consumer<SignInWithGoogle>(
               builder:(context,provider,child){
-    return Container(
-    width: MediaQuery.of(context).size.width,
-    height: 60,
-    margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
-    decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(10),
-    ),
-    child: ElevatedButton(
-    onPressed:(){
-      provider.googleSignUp(context);
-    },
-    style: ButtonStyle(
-    backgroundColor: MaterialStateProperty.resolveWith((states){
-    if(states.contains(MaterialState.pressed)){
-    return const Color(0xff1500DB);
+             return Container(
+        width: MediaQuery.of(context).size.width,
+        height: 50,
+        margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: ElevatedButton(
+            onPressed:(){
+              provider.googleSignUp(context);
+            },
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith((states){
+                  if(states.contains(MaterialState.pressed)){
+                    return const Color(0xff1500DB);
 
-    }
-    return const Color(0xff1500DB);
-    }),
-    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-    RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(15.0),
-    )
-    )
-    ),
-    child: Padding(
-    padding: const EdgeInsets.only(
-    left: 20,
-    ),
-    child: Row(
-    children: [
-    Image.asset(
-    'assets/images/google.png',
-    scale: 10,
-    ),
-    const SizedBox(width: 5,),
-    const Text(
-    'Continue with Google',
-    style: TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w400,
-    color: Colors.white,
-    fontFamily: 'Montserrat'
-    ),
-    ),
+                  }
+                  return const Color(0xff1500DB);
+                }),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    )
+                )
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 20,
+              ),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/images/google.png',
+                    scale: 20,
+                  ),
+                  const SizedBox(width: 5,),
+                  const Text(
+                    'Continue with Google',
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                        fontFamily: 'Montserrat'
+                    ),
+                  ),
 
-    ],
-    ),
-    )
+                ],
+              ),
+            )
 
-    ),
-    );
+        ),
+      );
     }
     ),
               ),

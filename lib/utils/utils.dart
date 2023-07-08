@@ -13,7 +13,7 @@ class utils{
 
   static toastMessage(String message){
     Fluttertoast.showToast(msg: message,
-    backgroundColor: Colors.grey.shade200,
+    backgroundColor: Colors.orangeAccent,
       textColor: Colors.white,
       fontSize: 16
     );

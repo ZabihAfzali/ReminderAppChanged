@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:reminder_app/constants/constants.dart';
 import 'package:reminder_app/utils/utils.dart';
-
-
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({Key? key}) : super(key: key);
 
@@ -33,7 +31,6 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                 top: 20,
                 right: 20,
                 left: 20,
-
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -139,8 +136,6 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                       if (_formKey.currentState!.validate()) {
                           updatePassword(context,_confirmPasswordController.text);
                           Navigator.pop(context);
-
-
                       }
                     },
                     child: Text('Save',style: TextStyle(
@@ -162,11 +157,9 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
       title: const Text("Please wait..."),
     );
     progressDialog.show();
-
     FirebaseAuth firebaseAuth=FirebaseAuth.instance;
     DatabaseReference dbRef=FirebaseDatabase.instance.ref().child('user');
     User? currentUser = FirebaseAuth.instance.currentUser;
-
     await currentUser!.updatePassword(password).then((value){
       progressDialog.dismiss();
       Navigator.pop(context);

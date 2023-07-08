@@ -11,18 +11,16 @@ import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:reminder_app/Databases/AddRemindersDatabase/hive_box.dart';
 import 'package:reminder_app/Databases/AddRemindersDatabase/reminders_model.dart';
-import 'package:reminder_app/Databases/DateFormatDatabase/dateFormat_model.dart';
 import 'package:reminder_app/E-cards/E_cards_screen.dart';
 import 'package:reminder_app/Reminders/reminders_list.dart';
 import 'package:reminder_app/constants/constants.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:reminder_app/screens/login_screen.dart';
 import 'package:reminder_app/utils/utils.dart';
-
 import '../Databases/DateFormatDatabase/dateFormat_box.dart';
+import '../Databases/DateFormatDatabase/dateFormat_model.dart';
 import '../Settings/profile_settings.dart';
 import '../Settings/settings.dart';
-import '../controllers/SettingsProvider.dart';
 import '../TestingScreen/test_screen.dart';
 
 
@@ -45,36 +43,24 @@ class _HomeScreenState extends State<HomeScreen> {
   TimeOfDay? _selectedTime;
   final TimeOfDay currentTime = TimeOfDay.now();
    DateFormat dateFormat=DateFormat('EEEE, MMMM d, yyyy');
-
   int _selectedIndex = 0;
-
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _dateTimeController = TextEditingController();
-  bool _showNotification = false;
-  bool _showOnCalendar = false;
   String? strDateFormat;
-
   @override
   void dispose() {
     _descriptionController.dispose();
     _dateTimeController.dispose();
     super.dispose();
   }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-
-
   }
-
-
-
   @override
   Widget build(BuildContext context) {
-    dateFormat= DateFormat(context.watch<DateFormatProvider>().dateFormat);
+    //dateFormat= DateFormat(context.watch<DateFormatProvider>().dateFormat);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -108,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         drawer: Drawer(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.orangeAccent,
           child: Padding(
             padding: const EdgeInsets.all(18.0),
             child: Center(
@@ -148,8 +134,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Profile',
                         style: TextStyle(
                             fontWeight: FontWeight.w800,
-                            color: Colors.black,
-                            fontSize: 50,
+                            color: Colors.white,
+                            fontSize: 40,
                             fontFamily: 'Montserrat'
                         ),
                       ),
@@ -165,8 +151,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Reminder',
                         style: TextStyle(
                             fontWeight: FontWeight.w800,
-                            color: Colors.black,
-                            fontSize: 50,
+                            color: Colors.red,
+                            fontSize: 40,
                             fontFamily: 'Montserrat'
                         ),
                       ),
@@ -180,8 +166,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Setting',
                         style: TextStyle(
                             fontWeight: FontWeight.w800,
-                            color: Colors.black,
-                            fontSize: 50,
+                            color: Colors.white,
+                            fontSize: 40,
                             fontFamily: 'Montserrat'
                         ),
                       ),
@@ -195,8 +181,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Share',
                         style: TextStyle(
                             fontWeight: FontWeight.w800,
-                            color: Colors.black,
-                            fontSize: 50,
+                            color: Colors.white,
+                            fontSize: 40,
                             fontFamily: 'Montserrat'
                         ),
                       ),
@@ -213,8 +199,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Logout',
                         style: TextStyle(
                             fontWeight: FontWeight.w800,
-                            color: Colors.black,
-                            fontSize: 50,
+                            color: Colors.white,
+                            fontSize: 40,
                             fontFamily: 'Montserrat'
                         ),
                       ),
@@ -226,7 +212,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        body: ValueListenableBuilder<Box<AddEventModel>>(
+        body:
+        ValueListenableBuilder<Box<AddEventModel>>(
           valueListenable: HiveBox.getEventDataBox().listenable(),
           builder: (context,box,_){
             var data=box.values.toList().cast<AddEventModel>();
@@ -700,12 +687,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
 
-
-
-
   }
-
-
   void delete(AddEventModel addEventModel) async{
     addEventModel.delete();
   }
@@ -714,9 +696,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       Box dateFormatBox = DateFormatBox.getDateFormatBox();
-
       // var data = box.values.toList().cast<DateFormatModel>();
-       strDateFormat = dateFormatBox.get("1").dateFormat.toString();
+      strDateFormat = dateFormatBox.get("1").dateFormat.toString();
 
       print('Date format This hive recieved data $strDateFormat');
     }catch(e){
@@ -976,7 +957,6 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-
   Future<void> addDataToReminderDatabaseList(String eventName) async{
 
       listOfData.add(eventName);
@@ -993,13 +973,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   }
+  void shareAppLink() {
 
-  void shareAppLink() {}
-
-
-
-
-
-
+  }
 
 }
