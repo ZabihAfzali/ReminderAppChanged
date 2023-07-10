@@ -1,26 +1,40 @@
 import 'package:flutter/material.dart';
-class SelectDateScreen extends StatefulWidget {
-  const SelectDateScreen({Key? key}) : super(key: key);
+class SelectionSearch extends StatefulWidget {
+  const SelectionSearch({Key? key}) : super(key: key);
 
   @override
-  State<SelectDateScreen> createState() => _SelectDateScreenState();
+  State<SelectionSearch> createState() => _SelectionSearchState();
 }
 
-class _SelectDateScreenState extends State<SelectDateScreen> {
+class _SelectionSearchState extends State<SelectionSearch> {
 
   int current_index = 0;
 
-
   List<String> list = [
-    '12-May-2023',
-    '12-5-2023',
-    '5-12-2023',
-    '2023-12-5',
+    'On Calender',
+    'Birthday',
+    'Meetings',
+    'Weddings',
+    'Mother Day',
+    'Father Day',
   ];
+
+  // Color getColor(Set<MaterialState> states) {
+  //   const Set<MaterialState> interactiveStates = <MaterialState>{
+  //     MaterialState.pressed,
+  //     MaterialState.hovered,
+  //     MaterialState.focused,
+  //   };
+  //   if (states.any(interactiveStates.contains)) {
+  //     return  const Color(0xffFFBD12);
+  //   }
+  //   return Colors.red;
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Scaffold(
+      body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -46,7 +60,7 @@ class _SelectDateScreenState extends State<SelectDateScreen> {
                       left: 20,
                     ),
                     child: Text(
-                      'Select Date Format',
+                      'Reminders',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -62,7 +76,7 @@ class _SelectDateScreenState extends State<SelectDateScreen> {
                       onTap: (){
                         Navigator.pop(context);
                       },
-                      child: const Icon(
+                      child: Icon(
                         Icons.close,
                         size: 30,
                         color: Colors.white,
@@ -71,7 +85,6 @@ class _SelectDateScreenState extends State<SelectDateScreen> {
                   )
                 ],
               ),
-
             ),
             Expanded(
               child: Padding(
@@ -92,8 +105,8 @@ class _SelectDateScreenState extends State<SelectDateScreen> {
                           children: [
                             Checkbox(
                               activeColor: const Color(0xffFFBD12),
-                              focusColor: Color(0xffFFBD12),
-                              fillColor: MaterialStateProperty.all(Color(0xffFFBD12)),
+                              fillColor: MaterialStateProperty.all(const Color(0xffFFBD12)),
+                              focusColor: const Color(0xffFFBD12),
                               value: current_index == index ? true : false,
                               onChanged: (bool? value) {
                                 setState(() {
@@ -134,7 +147,6 @@ class _SelectDateScreenState extends State<SelectDateScreen> {
                         backgroundColor: MaterialStateProperty.resolveWith((states){
                           if(states.contains(MaterialState.pressed)){
                             return const Color(0xff1500DB);
-
                           }
                           return const Color(0xff1500DB);
                         }),
@@ -159,7 +171,7 @@ class _SelectDateScreenState extends State<SelectDateScreen> {
               ),
             ),
           ]
-
+      ),
     );
   }
 

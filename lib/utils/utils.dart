@@ -15,7 +15,8 @@ class utils{
     Fluttertoast.showToast(msg: message,
     backgroundColor: Colors.orangeAccent,
       textColor: Colors.white,
-      fontSize: 16
+      fontSize: 16,
+      toastLength: Toast.LENGTH_LONG
     );
   }
 }

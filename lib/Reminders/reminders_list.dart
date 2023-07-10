@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
-import 'package:reminder_app/Databases/AddRemindersDatabase/hive_box.dart';
-import 'package:reminder_app/Databases/AddRemindersDatabase/reminders_model.dart';
+import 'package:reminder_app/Databases/Hive_database/hive_database_box.dart';
+import 'package:reminder_app/Reminders/selection_search_screen.dart';
 import 'package:reminder_app/constants/constants.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:reminder_app/screens/login_screen.dart';
@@ -11,15 +11,15 @@ import 'package:reminder_app/utils/utils.dart';
 import 'package:intl/intl.dart';
 
 import '../Databases/DateFormatDatabase/dateFormat_box.dart';
+import '../Databases/Hive_database/hive_database.dart';
 
 
 
 
 class RemindersScreen extends StatefulWidget {
-  final List<String>? listIncommingData;
-  int? searchIndex;
+  final DataEvent? dataEvent;
 
-   RemindersScreen({this.listIncommingData,this.searchIndex,});
+   RemindersScreen({this.dataEvent,});
 
   @override
   State<RemindersScreen> createState() => _RemindersScreenState();
@@ -33,13 +33,13 @@ class _RemindersScreenState extends State<RemindersScreen> {
   final TextEditingController _dateTimeController = TextEditingController();
   TextEditingController _eventNameController = TextEditingController();
   TextEditingController _searchEventController = TextEditingController();
-  List<RemindersModel> listSearchedItems = [];
+  List<DataReminder> listSearchedItems = [];
   String? strSearchResult;
-
   bool _showNotification = false;
   bool _showOnCalendar = false;
   String? strDateFormat;
   int? searchIndex;
+  DataEvent? dataEvent;
 
 
 
@@ -52,20 +52,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    if(widget.listIncommingData != null) {
-      setState(() {
-        listIncommingData = widget.listIncommingData!;
-        _addEvent();
-      });
-    }
-
-    if(widget.searchIndex!=null){
-      searchIndex=widget.searchIndex;
-    }
-
-
-
+    dataEvent=widget.dataEvent;
 
   }
 
@@ -77,116 +64,103 @@ class _RemindersScreenState extends State<RemindersScreen> {
     listSearchedItems.clear();
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
      return SafeArea(
       child: Scaffold(
        backgroundColor: Colors.orangeAccent,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          toolbarHeight: 180,
-          flexibleSpace: Padding(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: (){
-                        Navigator.pop(context);
-                      },
-                      child: SvgPicture.asset(
-                        'assets/svg_pics/back_arrow.svg',
-                        height: 50,
-                        width: 50,
-                      ),
-                    ),
-                    const SizedBox(width: 60,),
-                    const Text(
-                      'Reminders',style: kBoldSmallStyle,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10,),
-                Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: TextField(
-                    controller: _searchEventController,
-                    onChanged: (String entered_search_text) {
-
-                        searchItems(entered_search_text);
+        body: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  InkWell(
+                    onTap: (){
+                      Navigator.pop(context);
                     },
-                    decoration: InputDecoration(
-                        hintText: 'Search here',
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        contentPadding:const EdgeInsets.fromLTRB(20,10,20,10),
-                        filled: true,
-                        fillColor: Colors.white,
-
-                        suffixIcon: Container(
-                          height: 20,
-                          width: 10,
-                          color: Colors.orange,
-                          child: Center(
-                            child: IconButton(
-                              onPressed: ()
-                              {
-                                _selectLanguage(context);
-                              },
-                              style: const ButtonStyle(
-                                backgroundColor:MaterialStatePropertyAll( Colors.orange),
-                              ),
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                size: 40,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        )
+                    child: SvgPicture.asset(
+                      'assets/svg_pics/back_arrow.svg',
+                      height: 50,
+                      width: 50,
                     ),
                   ),
+                  const SizedBox(width: 60,),
+                  const Text(
+                    'Reminders',style: kBoldSmallStyle,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20,),
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: TextField(
+                  controller: _searchEventController,
+                  onChanged: (String value) {
+                    if(value.length > 0) {
+                      searchItems(value);
+                    }
+                   else {
+                      listSearchedItems = [];
+                      setState(() {});
+                    }
+                  },
+                  decoration: InputDecoration(
+                      hintText: 'Search here',
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      contentPadding:const EdgeInsets.fromLTRB(20,10,20,10),
+                      filled: true,
+                      fillColor: Colors.white,
+                      suffixIcon: Container(
+                        height: 10,
+                        width: 10,
+                        decoration: BoxDecoration(
+                            color: const Color(0xffF95A2C),
+                            border: Border.all(
+                              width: 2,
+                            )
+                        ),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: IconButton(
+                            onPressed: (){
+
+                            },
+                            icon: const Icon(
+                              Icons.arrow_drop_down,
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      )
+                  ),
                 ),
-
-
-              ],
-            ),
+              ),
+              Expanded(
+                child: listSearchedItems.length == 0 ? GetListView(widget.dataEvent!.event_name, widget.dataEvent!.list_reminders) : GetListView(widget.dataEvent!.event_name, listSearchedItems))
+            ],
           ),
-        ),
-        body: listSearchedItems.length == 0 ?
-        ValueListenableBuilder<Box<RemindersModel>>(
-          valueListenable: HiveBox.getReminderDataBox().listenable(),
-          builder: (context,box,_){
-            var databasee_list_remider =box.values.toList().cast<RemindersModel>();
-            return GetListView(databasee_list_remider);
-          },
-
-        ):
-        GetListView(listSearchedItems),
-
+        )
       ),
     );
   }
 
 
-   GetListView(List<RemindersModel> listSearchedItems ) {
+   GetListView(String event_name, List<DataReminder> list_reminders ) {
     return ListView.builder(
       //reverse: true,
-        itemCount: listSearchedItems.length,
+        itemCount: list_reminders.length,
         itemBuilder: (context,index){
       return Padding(
         padding: const EdgeInsets.only(
-          left:10,
-          right: 10,
-          top: 10,
+          left:5,
+          right: 6,
+          top: 6,
         ),
         child: Card(
           shape: RoundedRectangleBorder(
@@ -197,9 +171,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
             ),
           ),
           child: ListTile(
-            title: Text('${listSearchedItems[index].eventName}'),
-            subtitle: Text('${listSearchedItems[index].description}\n'
-                '${listSearchedItems[index].date}  ${listSearchedItems[index].time}'),
+            title: Text('${event_name}'),
+            subtitle: Text('${list_reminders[index].description}'),
             leading: SvgPicture.asset(
               'assets/svg_pics/splash.svg',
               width: 50,
@@ -207,10 +180,11 @@ class _RemindersScreenState extends State<RemindersScreen> {
             ),
             trailing: InkWell(
               onTap: (){
-                showMenuDialog(listSearchedItems[index],listSearchedItems[index].eventName,listSearchedItems[index].description,);
+                // showMenuDialog(listSearchedItems[index],listSearchedItems[index].event_name,
+                //   listSearchedItems[index].list_reminders[2].toString(),);
               },
               child:SvgPicture.asset(
-                'assets/svg_pics/more-vertical.svg',
+                'assets/svg_pics/vertical.svg',
                 height: 20,
               ),
             ),
@@ -221,7 +195,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
   }
 
 
-  showMenuDialog(RemindersModel addReminderModel,String eventName, String description,) {
+  showMenuDialog(DataEvent addReminderModel,String eventName, String description,) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -404,7 +378,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                             ),
                             child: ElevatedButton(
                               onPressed:(){
-                                addDataToReminderDatabaseList(eventName,description,);
+
                               },
                               style: ButtonStyle(
                                   backgroundColor: MaterialStateProperty.resolveWith((states){
@@ -523,113 +497,80 @@ class _RemindersScreenState extends State<RemindersScreen> {
     }
   }
 
-  void _addEvent() {
-
-      final data = RemindersModel(eventName: listIncommingData[0],
-        description: listIncommingData[1], date: listIncommingData[2],time: listIncommingData[3]);
-      final box = HiveBox.getReminderDataBox();
-      box.add(data);
-
-      print('This is box.length ${listIncommingData}' );
-      print(box);
-
-
-  }
-
 
 
   void searchItems(String entered_search_text) async {
 
 
-    var box = HiveBox.getReminderDataBox();
-
-    var databasee_list_remider =box.values.toList().cast<RemindersModel>();
+    // var box = HiveDatabaseBox.GetDataEvent();
+    //
+    // var databasee_list_remider =box.values.toList().cast<DataEvent>();
 
     listSearchedItems = [];
 
-    databasee_list_remider.forEach((RemindersModel remindersModel) {
-      if(remindersModel.eventName.trim().toLowerCase().contains(entered_search_text.trim().toLowerCase())) {
-        listSearchedItems.add(remindersModel);
+    widget.dataEvent!.list_reminders.forEach((DataReminder dataReminder) {
+      if(dataReminder.description.trim().toLowerCase().contains(entered_search_text.trim().toLowerCase())) {
+        print('objectobjectobject  ${dataReminder.description.trim().toLowerCase()}');
+        print('objectobjectobject  ${entered_search_text.trim().toLowerCase()}');
+        listSearchedItems.add(dataReminder);
       }
     });
 
-    setState(() {
+    print('objectobjectobject  ${listSearchedItems.length}');
 
-    });
+    setState(() {});
 
   }
 
-  void delete(RemindersModel remindersModel) async{
+  void delete(DataEvent remindersModel) async{
     remindersModel.delete();
   }
 
-  void addDataToReminderDatabaseList(String eventName,String description) {
-    final data = RemindersModel(eventName: eventName,
-        description: _descriptionController.text, date: selectedDate.toString(),time: _selectedTime.toString());
-    final box = HiveBox.getReminderDataBox();
-    box.add(data);
 
-    print(box);
 
-  }
-
-  void _selectLanguage(BuildContext context) {
-
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-      ),
-      builder: (BuildContext context) {
-        return const LoginScreen();
-
-      },
-    );
-  }
-
-  Future<void> searchCalender(BuildContext context) async {
-
-    try {
-      Box dateFormatBox = DateFormatBox.getDateFormatBox();
-      //var data = box.values.toList().cast<DateFormatModel>();
-      strDateFormat = dateFormatBox.get("1").dateFormat.toString();
-
-      print('Date format This hive recieved data $strDateFormat');
-    }catch(e){
-      utils.toastMessage(e.toString());
-    }
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialEntryMode: DatePickerEntryMode.input,
-      initialDate: selectedDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate != null && pickedDate != selectedDate) {
-      setState(() {
-        selectedDate = pickedDate;
-        searchDateFromCalender(selectedDate.toString());
-      });
-    }
-  }
-  void searchDateFromCalender(String entered_search_text) async {
-    var box = HiveBox.getReminderDataBox();
-
-    var databasee_list_remider =box.values.toList().cast<RemindersModel>();
-
-    listSearchedItems = [];
-
-    databasee_list_remider.forEach((RemindersModel remindersModel) {
-      if(remindersModel.date.trim().toLowerCase().contains(entered_search_text.trim().toLowerCase())) {
-        listSearchedItems.add(remindersModel);
-      }
-    });
-
-    setState(() {
-
-    });
-
-  }
+  // Future<void> searchCalender(BuildContext context) async {
+  //
+  //   try {
+  //     Box dateFormatBox = DateFormatBox.getDateFormatBox();
+  //     //var data = box.values.toList().cast<DateFormatModel>();
+  //     strDateFormat = dateFormatBox.get("1").dateFormat.toString();
+  //
+  //     print('Date format This hive recieved data $strDateFormat');
+  //   }catch(e){
+  //     utils.toastMessage(e.toString());
+  //   }
+  //   final DateTime? pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialEntryMode: DatePickerEntryMode.input,
+  //     initialDate: selectedDate,
+  //     firstDate: DateTime.now(),
+  //     lastDate: DateTime(2100),
+  //   );
+  //
+  //   if (pickedDate != null && pickedDate != selectedDate) {
+  //     setState(() {
+  //       selectedDate = pickedDate;
+  //       searchDateFromCalender(selectedDate.toString());
+  //     });
+  //   }
+  // }
+  // void searchDateFromCalender(String entered_search_text) async {
+  //   var box = HiveBox.getReminderDataBox();
+  //
+  //   var databasee_list_remider =box.values.toList().cast<RemindersModel>();
+  //
+  //   listSearchedItems = [];
+  //
+  //   databasee_list_remider.forEach((RemindersModel remindersModel) {
+  //     if(remindersModel.date.trim().toLowerCase().contains(entered_search_text.trim().toLowerCase())) {
+  //       listSearchedItems.add(remindersModel);
+  //     }
+  //   });
+  //
+  //   setState(() {
+  //
+  //   });
+  //
+  // }
 
 }

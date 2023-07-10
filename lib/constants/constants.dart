@@ -28,17 +28,14 @@ const  kBottomNavigationBar =  [
     icon: Icon(Icons.calendar_month),
     label: 'Events',
   ),
-  BottomNavigationBarItem(
-    icon: Icon(
-      Icons.add,size: 40,
-    ),
-    label: '',
-  ),
+
   BottomNavigationBarItem(
     icon: Icon(Icons.card_giftcard),
     label: 'E-cards',
   ),
 ];
+
+
 const kSplashText1=TextStyle(
   fontSize: 20,
   color: Colors.white,

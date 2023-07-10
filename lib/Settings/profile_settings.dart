@@ -149,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   child: provider.image==null?mapData!['profile_image_url'].toString()
                                                     ==''? Image.asset('assets/images/person.jpeg'):
                                                 Image(
-                                                  fit: BoxFit.cover,
+                                                  fit: BoxFit.fill,
                                                   image: NetworkImage(
                                                     mapData!['profile_image_url'.toString()],
                                                   ),

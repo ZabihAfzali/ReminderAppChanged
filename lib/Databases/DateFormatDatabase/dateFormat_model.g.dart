@@ -28,6 +28,7 @@ class DateFormatModelAdapter extends TypeAdapter<DateFormatModel> {
       ..writeByte(0)
       ..write(obj.dateFormat);
   }
+
   @override
   int get hashCode => typeId.hashCode;
 

@@ -29,8 +29,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -152,8 +151,8 @@ class _SelectLanguageState extends State<SelectLanguage> {
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
-                            )
-                        )
+                            ),
+                        ),
                     ),
                     child: const Text(
                       'Ok',
@@ -164,13 +163,13 @@ class _SelectLanguageState extends State<SelectLanguage> {
                           fontFamily: 'Montserrat'
                       ),
                     ),
-                  )
+                  ),
 
 
               ),
             ),
           ]
-      ),
+
     );
   }
 
